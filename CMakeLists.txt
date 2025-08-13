@@ -20,4 +20,4 @@ target_include_directories(${PROJECT_NAME}
 )
 
 include_directories(C:/SFML/include)
-target_link_libraries(${PROJECT_NAME} -mwindows sfml-system sfml-window sfml-graphics sfml-audio sfml-network)
+target_link_libraries(${PROJECT_NAME} sfml-system sfml-window sfml-graphics sfml-audio sfml-network)
