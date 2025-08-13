@@ -13,5 +13,8 @@ public:
     Code();
     ~Code();
 
-    std::vector<Line> lines;
+    std::vector<Line> _lines;
+
+    void addLine();
+    void removeLine();
 };
