@@ -12,9 +12,17 @@ Emmett::Emmett()
 
     _ram->_cpu = _cpu;
     _compiler->_ram = _ram;
+
+    _run = false;
+    _timer = 0.0f;
 }
 
 Emmett::~Emmett()
+{
+
+}
+
+void Emmett::update(float deltaTime)
 {
 
 }

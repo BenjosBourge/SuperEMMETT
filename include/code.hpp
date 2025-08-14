@@ -2,6 +2,8 @@
 |         Super EMMETT         |
 \-----------------------------*/
 
+#pragma once
+
 class Line {
 public:
     Line();

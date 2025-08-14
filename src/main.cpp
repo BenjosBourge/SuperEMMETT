@@ -26,6 +26,16 @@ void compileCode(std::shared_ptr<Emmett> emmett)
     }
 }
 
+void runCode(std::shared_ptr<Emmett> emmett)
+{
+    emmett->_run = !emmett->_run;
+
+    if (emmett->_run) {
+        emmett->_cpu->reset();
+        emmett->_timer = 0.5f;
+    }
+}
+
 int main()
 {
     std::shared_ptr<Emmett> emmett = std::make_shared<Emmett>();
@@ -41,11 +51,15 @@ int main()
     removeLine_button._click = removeLine;
     Button compile_button(1460, 800, 50, 30, "C");
     compile_button._click = compileCode;
+    Button run_button(200, 800, 100, 40, "Run");
+    run_button._click = runCode;
+
 
     std::vector<Button> buttons;
     buttons.push_back(addLine_button);
     buttons.push_back(removeLine_button);
     buttons.push_back(compile_button);
+    buttons.push_back(run_button);
 
     sf::Font font;
     if (!font.loadFromFile("assets/RifficFree-Bold.ttf"))
@@ -54,7 +68,7 @@ int main()
     sf::Clock clock;
     while (window.isOpen())
     {
-        sf::Time deltaTime = clock.restart();
+        float deltaTime = clock.restart().asSeconds();
 
         sf::Event event;
         while (window.pollEvent(event))
@@ -64,6 +78,7 @@ int main()
         }
 
         emmett->_mouse.update(window);
+        emmett->update(deltaTime);
 
         for (auto &button : buttons)
         {
@@ -128,6 +143,67 @@ int main()
             text.setPosition(button._x + 10, button._y + 5);
             window.draw(text);
         }
+
+        // draw Cpu
+        rectangle.setFillColor({155, 89, 182});
+        rectangle.setSize(sf::Vector2f(360, 160));
+        rectangle.setPosition(100, 600);
+        window.draw(rectangle);
+
+        // register
+        rectangle.setFillColor({90, 90, 90});
+        rectangle.setSize(sf::Vector2f(30, 30));
+        for (int i = 0; i < emmett->_cpu->_registers.size(); i += 1)
+        {
+            rectangle.setPosition(380 + (i / 4) * 35, 610 + (i % 4) * 35 + 2);
+            window.draw(rectangle);
+
+            if (emmett->_cpu->_registers[i] == 0) {
+                std::string hex = std::format("{:02X}", emmett->_cpu->_registers[i]);
+                sf::Text text(hex, font, 17);
+                text.setFillColor(sf::Color::Black);
+                text.setPosition(380 + (i / 4) * 35 + 2, 610 + (i % 4) * 35 + 7);
+                window.draw(text);
+            }
+        }
+
+        // X and Y
+        rectangle.setSize(sf::Vector2f(60, 60));
+        rectangle.setPosition(300, 615);
+        window.draw(rectangle);
+        if (emmett->_cpu->_x == 0) {
+            std::string hex = std::format("{:02X}", emmett->_cpu->_x);
+            sf::Text text(hex, font, 32);
+            text.setFillColor(sf::Color::Black);
+            text.setPosition(300 + 5, 615 + 10);
+            window.draw(text);
+        }
+        rectangle.setPosition(300, 685);
+        window.draw(rectangle);
+        if (emmett->_cpu->_y == 0) {
+            std::string hex = std::format("{:02X}", emmett->_cpu->_y);
+            sf::Text text(hex, font, 32);
+            text.setFillColor(sf::Color::Black);
+            text.setPosition(300 + 5, 685 + 10);
+            window.draw(text);
+        }
+
+        // Accumulator
+        rectangle.setSize(sf::Vector2f(120, 120));
+        rectangle.setPosition(170, 620);
+        window.draw(rectangle);
+        if (emmett->_cpu->_y == 0) {
+            std::string hex = std::format("{:02X}", emmett->_cpu->_y);
+            sf::Text text(hex, font, 48);
+            text.setFillColor(sf::Color::Black);
+            text.setPosition(170 + 25, 620 + 30);
+            window.draw(text);
+        }
+
+        // pc
+        rectangle.setSize(sf::Vector2f(50, 30));
+        rectangle.setPosition(110, 615);
+        window.draw(rectangle);
 
 
         window.display();

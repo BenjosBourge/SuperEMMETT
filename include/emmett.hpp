@@ -2,6 +2,7 @@
 |         Super EMMETT         |
 \-----------------------------*/
 
+#pragma once
 #include <vector>
 #include <memory>
 #include <ram.hpp>
@@ -21,4 +22,9 @@ public:
     std::shared_ptr<Cpu> _cpu;
     std::shared_ptr<Compiler> _compiler;
     std::shared_ptr<Code> _code;
+
+    void update(float deltaTime);
+
+    bool _run;
+    float _timer;
 };

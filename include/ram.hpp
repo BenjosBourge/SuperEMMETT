@@ -2,6 +2,7 @@
 |         Super EMMETT         |
 \-----------------------------*/
 
+#pragma once
 #include <vector>
 #include <memory>
 

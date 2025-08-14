@@ -2,6 +2,7 @@
 |         Super EMMETT         |
 \-----------------------------*/
 
+#pragma once
 #include <string>
 #include <memory>
 
