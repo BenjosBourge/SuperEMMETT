@@ -12,6 +12,7 @@ Emmett::Emmett()
 
     _ram->_cpu = _cpu;
     _compiler->_ram = _ram;
+    _cpu->_ram = _ram;
 
     _run = false;
     _timer = 0.0f;
@@ -27,7 +28,7 @@ void Emmett::update(float deltaTime)
     if (_run) {
         _timer -= deltaTime;
         if (_timer <= 0.0f) {
-            _cpu->_pc++;
+            _cpu->fetch();
             _timer = 0.5f;
         }
     }

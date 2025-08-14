@@ -15,10 +15,10 @@ public:
     ~Opcode();
 
     std::string _name;
-    char _opcode;
+    unsigned char _opcode;
 };
 
-std::unordered_map<uint8_t, Opcode> opcodes = {
+static const std::unordered_map<uint8_t, Opcode> opcodes = {
         {0x00, Opcode("NOP", 0x00)},
         {0x10, Opcode("LDA_abs", 0x10)},
 };

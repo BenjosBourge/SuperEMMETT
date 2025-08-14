@@ -13,5 +13,10 @@ Opcode::Opcode(std::string name, char opcode)
     _opcode = opcode;
 }
 
+Opcode::~Opcode()
+{
+
+}
+
 
 

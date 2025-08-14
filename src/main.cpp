@@ -17,13 +17,7 @@ void removeLine(std::shared_ptr<Emmett> emmett)
 
 void compileCode(std::shared_ptr<Emmett> emmett)
 {
-    int pc = 0;
-    for (int i = 0; i < emmett->_ram->_memorySize; ++i)
-        emmett->_ram->_memory[i] = 0;
-    for (auto &l : emmett->_code->_lines) {
-        emmett->_ram->_memory[pc] = 1; // Example operation: set memory at pc to 1
-        pc++;
-    }
+    emmett->_compiler->compile(emmett->_code->_lines);
 }
 
 void runCode(std::shared_ptr<Emmett> emmett)
@@ -81,14 +75,9 @@ int main()
         emmett->update(deltaTime);
 
         for (auto &button : buttons)
-        {
             if (button.isPressed(emmett->_mouse._x, emmett->_mouse._y) && emmett->_mouse._clicked)
-            {
-                if (button._click) {
+                if (button._click)
                     button._click(emmett);
-                }
-            }
-        }
 
         window.clear();
 
@@ -103,7 +92,7 @@ int main()
             int x = i % number_of_col; // 100 columns
             int y = i / number_of_col; // 10 rows
             rectangle.setPosition(100 + x * 30, 100 + y * 30);
-            if (emmett->_ram->_memory[i] == 1) {
+            if (emmett->_ram->_memory[i] != 0) {
                 rectangle.setFillColor({250, 250, 250});
             } else
                 rectangle.setFillColor({90, 90, 90});
@@ -120,13 +109,17 @@ int main()
 
         // draw the lines
         rectangle.setFillColor({250, 250, 250});
-        rectangle.setSize(sf::Vector2f(100, 20));
+        rectangle.setSize(sf::Vector2f(160, 40));
         int offset = 0;
         for (auto &l : emmett->_code->_lines)
         {
-            rectangle.setPosition(1400, 100 + offset);
+            rectangle.setPosition(1350, 100 + offset);
             window.draw(rectangle);
-            offset += 30; // Increment offset for each line
+            sf::Text text(l._text, font, 20);
+            text.setFillColor(sf::Color::Black);
+            text.setPosition(1350 + 10, 100 + offset + 5);
+            window.draw(text);
+            offset += 50; // Increment offset for each line
         }
 
         // draw the buttons
@@ -158,7 +151,7 @@ int main()
             rectangle.setPosition(380 + (i / 4) * 35, 610 + (i % 4) * 35 + 2);
             window.draw(rectangle);
 
-            if (emmett->_cpu->_registers[i] == 0) {
+            if (emmett->_cpu->_registers[i] != 0) {
                 std::string hex = std::format("{:02X}", emmett->_cpu->_registers[i]);
                 sf::Text text(hex, font, 17);
                 text.setFillColor(sf::Color::Black);
@@ -170,17 +163,27 @@ int main()
         // X and Y
         rectangle.setSize(sf::Vector2f(60, 60));
         rectangle.setPosition(300, 615);
+        if (emmett->_cpu->_x == 0)
+            rectangle.setFillColor({90, 90, 90});
+        else
+            rectangle.setFillColor({155, 155, 155});
         window.draw(rectangle);
-        if (emmett->_cpu->_x == 0) {
+        if (emmett->_cpu->_x != 0) {
             std::string hex = std::format("{:02X}", emmett->_cpu->_x);
             sf::Text text(hex, font, 32);
             text.setFillColor(sf::Color::Black);
             text.setPosition(300 + 5, 615 + 10);
             window.draw(text);
         }
-        rectangle.setPosition(300, 685);
+
         window.draw(rectangle);
-        if (emmett->_cpu->_y == 0) {
+        rectangle.setPosition(300, 685);
+        if (emmett->_cpu->_y == 0)
+            rectangle.setFillColor({90, 90, 90});
+        else
+            rectangle.setFillColor({155, 155, 155});
+        window.draw(rectangle);
+        if (emmett->_cpu->_y != 0) {
             std::string hex = std::format("{:02X}", emmett->_cpu->_y);
             sf::Text text(hex, font, 32);
             text.setFillColor(sf::Color::Black);
@@ -191,9 +194,13 @@ int main()
         // Accumulator
         rectangle.setSize(sf::Vector2f(120, 120));
         rectangle.setPosition(170, 620);
+        if (emmett->_cpu->_a == 0)
+            rectangle.setFillColor({90, 90, 90});
+        else
+            rectangle.setFillColor({155, 155, 155});
         window.draw(rectangle);
-        if (emmett->_cpu->_y == 0) {
-            std::string hex = std::format("{:02X}", emmett->_cpu->_y);
+        if (emmett->_cpu->_a != 0) {
+            std::string hex = std::format("{:02X}", emmett->_cpu->_a);
             sf::Text text(hex, font, 48);
             text.setFillColor(sf::Color::Black);
             text.setPosition(170 + 25, 620 + 30);

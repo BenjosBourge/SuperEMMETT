@@ -3,11 +3,22 @@
 #include <SFML/Graphics.hpp>
 #include <ram.hpp>
 
-Ram::Ram() {
-    _memorySize = 256*2;
+Ram::Ram()
+{
+    _memorySize = 512;
     _memory.resize(_memorySize, 0);
 }
 
-Ram::~Ram() {
-    // Destructor logic if needed
+Ram::~Ram()
+{
+
+}
+
+unsigned char Ram::getByte(int address)
+{
+    if (address < 0)
+        address += _memorySize;
+    if (address >= _memorySize)
+        address -= _memorySize;
+    return _memory[address];
 }

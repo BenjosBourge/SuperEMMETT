@@ -15,12 +15,12 @@ public:
 
     void reset();
 
-    char _a;
-    char _x;
-    char _y;
+    unsigned char _a;
+    unsigned char _x;
+    unsigned char _y;
 
     int _pc;
-    std::vector<char> _registers;
+    std::vector<unsigned char> _registers;
 
     std::shared_ptr<Ram> _ram;
 

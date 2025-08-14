@@ -2,6 +2,8 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <cpu.hpp>
+#include <unordered_map>
+#include <ram.hpp>
 
 Cpu::Cpu()
 {
@@ -26,5 +28,35 @@ void Cpu::reset()
 Cpu::~Cpu()
 {
 
+}
+
+
+void NOP(std::shared_ptr<Cpu> cpu)
+{
+    std::cout << "NOP executed at PC: " << cpu->_pc << std::endl;
+}
+
+void LDA(std::shared_ptr<Cpu> cpu)
+{
+    cpu->_a = cpu->_ram->getByte(cpu->_pc + 1);
+    cpu->_pc++;
+}
+
+
+
+std::unordered_map<unsigned char, void(*)(std::shared_ptr<Cpu>)> opcodeMap = {
+        {0x00, NOP},
+        {0x10, LDA}
+};
+
+void Cpu::fetch()
+{
+    unsigned char opcode = _ram->getByte(_pc);
+    if (opcodeMap.find(opcode) != opcodeMap.end()) {
+        opcodeMap[opcode](_ram->_cpu);
+    } else {
+        std::cerr << "Unknown opcode: " << std::hex << static_cast<int>(opcode) << std::dec << " at PC: " << _pc << std::endl;
+    }
+    _pc++;
 }
 

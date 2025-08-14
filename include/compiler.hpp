@@ -5,6 +5,7 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include <code.hpp>
 
 class Ram;
 
@@ -14,4 +15,6 @@ public:
     ~Compiler();
 
     std::shared_ptr<Ram> _ram;
+
+    void compile(const std::vector<Line>& lines);
 };

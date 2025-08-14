@@ -13,8 +13,10 @@ public:
     Ram();
     ~Ram();
 
+    unsigned char getByte(int address);
+
     int _memorySize;
-    std::vector<char> _memory;
+    std::vector<unsigned char> _memory;
 
     std::shared_ptr<Cpu> _cpu;
 };
