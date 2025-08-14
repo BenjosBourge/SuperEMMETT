@@ -201,10 +201,26 @@ int main()
         }
 
         // pc
-        rectangle.setSize(sf::Vector2f(50, 30));
-        rectangle.setPosition(110, 615);
+        rectangle.setSize(sf::Vector2f(55, 30));
+        rectangle.setPosition(108, 615);
+        rectangle.setFillColor({155, 155, 155});
         window.draw(rectangle);
+        std::string hex = std::format("{:04X}", emmett->_cpu->_pc);
+        sf::Text text(hex, font, 15);
+        text.setFillColor(sf::Color::Black);
+        text.setPosition(110 + 2, 615 + 5);
+        window.draw(text);
 
+        rectangle.setSize(sf::Vector2f(45, 45));
+        rectangle.setPosition(108, 650);
+        rectangle.setFillColor({155, 155, 155});
+        window.draw(rectangle);
+        hex = std::format("{:02X}", emmett->_ram->_memory[emmett->_cpu->_pc]);
+        text.setString(hex);
+        text.setCharacterSize(21);
+        text.setFillColor(sf::Color::Black);
+        text.setPosition(110 + 5, 650 + 10);
+        window.draw(text);
 
         window.display();
     }

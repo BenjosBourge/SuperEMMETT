@@ -24,5 +24,11 @@ Emmett::~Emmett()
 
 void Emmett::update(float deltaTime)
 {
-
+    if (_run) {
+        _timer -= deltaTime;
+        if (_timer <= 0.0f) {
+            _cpu->_pc++;
+            _timer = 0.5f;
+        }
+    }
 }
