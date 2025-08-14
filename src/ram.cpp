@@ -4,7 +4,7 @@
 #include <ram.hpp>
 
 Ram::Ram() {
-    _memorySize = 1000;
+    _memorySize = 256*2;
     _memory.resize(_memorySize, 0);
 }
 

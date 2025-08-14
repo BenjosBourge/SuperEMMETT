@@ -5,15 +5,12 @@
 #include <vector>
 #include <memory>
 
-class Cpu;
+class Ram;
 
-class Ram {
+class Compiler {
 public:
-    Ram();
-    ~Ram();
+    Compiler();
+    ~Compiler();
 
-    int _memorySize;
-    std::vector<char> _memory;
-
-    std::shared_ptr<Cpu> _cpu;
+    std::shared_ptr<Ram> _ram;
 };

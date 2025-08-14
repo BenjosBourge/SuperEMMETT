@@ -1,81 +1,45 @@
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
-#include <code.hpp>
+#include <format>
 #include <button.hpp>
-#include <ram.hpp>
+#include <emmett.hpp>
 
-Code code;
-Ram ram;
-
-class Mouse {
-public:
-    Mouse()
-    {
-        _pressed = false;
-        _clicked = false;
-    }
-
-    ~Mouse() = default;
-
-    int x = 0;
-    int y = 0;
-
-    void update(sf::RenderWindow &window) {
-        sf::Vector2i position = sf::Mouse::getPosition(window);
-        x = position.x;
-        y = position.y;
-
-        _clicked = false;
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-            if (!_pressed) {
-                _clicked = true;
-            }
-            _pressed = true;
-        } else {
-            _pressed = false;
-        }
-    }
-
-    bool _pressed;
-    bool _clicked;
-};
-
-void addLine()
+void addLine(std::shared_ptr<Emmett> emmett)
 {
-    code.addLine();
+    emmett->_code->addLine();
 }
 
-void removeLine()
+void removeLine(std::shared_ptr<Emmett> emmett)
 {
-    code.removeLine();
+    emmett->_code->removeLine();
 }
 
-void compileCode()
+void compileCode(std::shared_ptr<Emmett> emmett)
 {
     int pc = 0;
-    for (int i = 0; i < ram._memorySize; ++i)
-        ram._memory[i] = 0;
-    for (auto &l : code._lines) {
-        ram._memory[pc] = 1; // Example operation: set memory at pc to 1
+    for (int i = 0; i < emmett->_ram->_memorySize; ++i)
+        emmett->_ram->_memory[i] = 0;
+    for (auto &l : emmett->_code->_lines) {
+        emmett->_ram->_memory[pc] = 1; // Example operation: set memory at pc to 1
         pc++;
     }
 }
 
 int main()
 {
-    std::cout << "SuperEMMETT started." << std::endl;
+    std::shared_ptr<Emmett> emmett = std::make_shared<Emmett>();
 
     sf::RenderWindow window(sf::VideoMode(1600, 900), "SuperEMMETT");
     sf::RectangleShape rectangle(sf::Vector2f(100, 20));
     rectangle.setFillColor({250, 250, 250});
     rectangle.setPosition(100, 100);
 
-    Button addLine_button(1400, 800, 50, 30, "+");
+    Button addLine_button(1340, 800, 50, 30, "+");
     addLine_button._click = addLine;
-    Button removeLine_button(1460, 800, 50, 30, "-");
+    Button removeLine_button(1400, 800, 50, 30, "-");
     removeLine_button._click = removeLine;
-    Button compile_button(1520, 800, 80, 30, "C");
+    Button compile_button(1460, 800, 50, 30, "C");
     compile_button._click = compileCode;
 
     std::vector<Button> buttons;
@@ -86,8 +50,6 @@ int main()
     sf::Font font;
     if (!font.loadFromFile("assets/RifficFree-Bold.ttf"))
         return -1;
-
-    Mouse mouse;
 
     sf::Clock clock;
     while (window.isOpen())
@@ -101,14 +63,14 @@ int main()
                 window.close();
         }
 
-        mouse.update(window);
+        emmett->_mouse.update(window);
 
         for (auto &button : buttons)
         {
-            if (button.isPressed(mouse.x, mouse.y) && mouse._clicked)
+            if (button.isPressed(emmett->_mouse._x, emmett->_mouse._y) && emmett->_mouse._clicked)
             {
                 if (button._click) {
-                    button._click(); // Call the function associated with the button
+                    button._click(emmett);
                 }
             }
         }
@@ -117,27 +79,35 @@ int main()
 
         //draw the RAM
         rectangle.setFillColor({90, 90, 90});
-        rectangle.setSize(sf::Vector2f(10, 10));
+        rectangle.setSize(sf::Vector2f(25, 25));
 
-        int ram_number = 1000;
-        int number_of_col = 50; // 10 rows
+        int ram_number = emmett->_ram->_memorySize;
+        int number_of_col = 32; // 10 rows
         for (int i = 0; i < ram_number; ++i)
         {
             int x = i % number_of_col; // 100 columns
             int y = i / number_of_col; // 10 rows
-            rectangle.setPosition(100 + x * 15, 100 + y * 15);
-            if (ram._memory[i] == 1)
+            rectangle.setPosition(100 + x * 30, 100 + y * 30);
+            if (emmett->_ram->_memory[i] == 1) {
                 rectangle.setFillColor({250, 250, 250});
-            else
+            } else
                 rectangle.setFillColor({90, 90, 90});
             window.draw(rectangle);
+
+            if (emmett->_ram->_memory[i] != 0) {
+                std::string hex = std::format("{:02X}", emmett->_ram->_memory[i]);
+                sf::Text text(hex, font, 15);
+                text.setFillColor(sf::Color::Black);
+                text.setPosition(100 + x * 30 + 2, 100 + y * 30 + 5);
+                window.draw(text);
+            }
         }
 
         // draw the lines
         rectangle.setFillColor({250, 250, 250});
         rectangle.setSize(sf::Vector2f(100, 20));
         int offset = 0;
-        for (auto &l : code._lines)
+        for (auto &l : emmett->_code->_lines)
         {
             rectangle.setPosition(1400, 100 + offset);
             window.draw(rectangle);
