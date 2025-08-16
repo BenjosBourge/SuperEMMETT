@@ -14,6 +14,7 @@ public:
     ~Ram();
 
     unsigned char getByte(int address);
+    void setByte(int address, unsigned char value);
 
     int _memorySize;
     std::vector<unsigned char> _memory;

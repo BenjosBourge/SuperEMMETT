@@ -22,3 +22,12 @@ unsigned char Ram::getByte(int address)
         address -= _memorySize;
     return _memory[address];
 }
+
+void Ram::setByte(int address, unsigned char value)
+{
+    if (address < 0)
+        address += _memorySize;
+    if (address >= _memorySize)
+        address -= _memorySize;
+    _memory[address] = value;
+}

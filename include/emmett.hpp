@@ -10,6 +10,7 @@
 #include <compiler.hpp>
 #include <code.hpp>
 #include <mouse.hpp>
+#include <button.hpp>
 
 class Emmett {
 public:
@@ -23,7 +24,15 @@ public:
     std::shared_ptr<Compiler> _compiler;
     std::shared_ptr<Code> _code;
 
-    void update(float deltaTime);
+    void update(float deltaTime, std::shared_ptr<Emmett> emmett);
+    void draw(sf::RenderWindow &window);
+    void draw_ram(sf::RenderWindow &window);
+    void draw_code(sf::RenderWindow &window);
+    void draw_cpu(sf::RenderWindow &window);
+
+    std::vector<Button> _buttons;
+
+    sf::Font _font;
 
     bool _run;
     float _timer;

@@ -33,20 +33,28 @@ Cpu::~Cpu()
 
 void NOP(std::shared_ptr<Cpu> cpu)
 {
-    std::cout << "NOP executed at PC: " << cpu->_pc << std::endl;
+
 }
 
-void LDA(std::shared_ptr<Cpu> cpu)
+void LDA_imm(std::shared_ptr<Cpu> cpu)
 {
     cpu->_a = cpu->_ram->getByte(cpu->_pc + 1);
     cpu->_pc++;
 }
 
 
+void STA_abs(std::shared_ptr<Cpu> cpu)
+{
+    unsigned short address = (cpu->_ram->getByte(cpu->_pc + 1) << 8) | cpu->_ram->getByte(cpu->_pc + 2);
+    cpu->_ram->setByte(address, cpu->_a);
+}
+
+
 
 std::unordered_map<unsigned char, void(*)(std::shared_ptr<Cpu>)> opcodeMap = {
         {0x00, NOP},
-        {0x10, LDA}
+        {0x10, LDA_imm},
+        {0x12, STA_abs},
 };
 
 void Cpu::fetch()
@@ -55,7 +63,7 @@ void Cpu::fetch()
     if (opcodeMap.find(opcode) != opcodeMap.end()) {
         opcodeMap[opcode](_ram->_cpu);
     } else {
-        std::cerr << "Unknown opcode: " << std::hex << static_cast<int>(opcode) << std::dec << " at PC: " << _pc << std::endl;
+        NOP(_ram->_cpu);
     }
     _pc++;
 }
